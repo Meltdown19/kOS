@@ -96,8 +96,8 @@ function create_nodes {
 	local dv_needed is Hohmann_dv(target:orbit:periapsis).  //is a list
 	set burntime to burn_seconds(dv_needed[0]).
 	set nextburntime to burn_seconds(dv_needed[1]).
-	set Hohnode1 to node(time:seconds+waitingtime, 0, 0, burntime).
-	set Hohnode2 to node(time:seconds+waitingtime+TOF, 0, 0, nextburntime).
+	set Hohnode1 to node(time:seconds+waitingtime, 0, 0, dv_needed[0]).
+	set Hohnode2 to node(time:seconds+waitingtime+TOF, 0, 0, dv_needed[1]).
 	add Hohnode1.
 	mission["next"]().
 }
@@ -153,5 +153,7 @@ function circularization {
 	}
 }
 function approach
-mission["terminate"]().
+	mission["terminate"]().
 }
+
+}.

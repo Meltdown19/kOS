@@ -1,5 +1,5 @@
 //Izzo's algorithm for Lambert's problem for kOS
-//@author Meltdown
+//author Meltdown
 // v. 0.1
 // The algorithm is still dropping alot of errors so don't try to send your manned mission to Jool with it.
 // M >= 1 is also not working.
@@ -14,12 +14,13 @@
 //furnished to do so, subject to the following conditions:
 //The above copyright notice and this permission notice shall be included in all
 //copies or substantial portions of the Software.
+//TODO: Cleaning up the results (_lambert, reconstruct), investigating the tof, M-errors, nomenclature of norm() and i_versors, replacing const:pi with a set value.
 function asinh {
 Parameter n.
 
 return log10(n + sqrt(n^2 +1)).
 }
-//[0, +Inf)
+//]0, Inf] a true +inf would be nice but hey...hacks are real.
 set infinity to 1e69.
 
 //log to the base 2
@@ -68,7 +69,7 @@ Parameter
 
     // Chord
     set ch to r2 - r1.
-    set c_norm to norm(ch). //c_norm is actually the magnitude or the length of the chord, I just kept the names for consistency reasons.
+    set c_norm to norm(ch). //c_norm is the magnitude or the length of the chord, I just kept the names for consistency reasons.
 	set r1_norm to norm(r1). //same here
 	set r2_norm to norm(r2). // and here
 
@@ -144,10 +145,6 @@ Parameter
 	M, 
 	numiter, 
 	rtol.
-  //  # For abs(ll) == 1 the derivative is not continuous
-  //  assert abs(ll) < 1
-  //  assert T > 0  # Mistake on original paper
-
    set M_max to floor(T / constant:pi).
     set T_00 to arccos(ll) + ll * sqrt(1 - ll^2).
     //Refine maximum number of revolutions if necessary
@@ -158,7 +155,6 @@ Parameter
 		}
 	}
     // Check if a feasible solution exist for the given number of revolutions
-    // This departs from the original paper in that we do not compute all solutions
     if M > M_max {
         Print "No feasible solution, try with a smaller M".
 	}
@@ -189,7 +185,7 @@ ll.
         // Use arc cosine to avoid numerical errors
         return arccos(x * y + ll * (1 - x^2)).
 	}
-	//hyperbolic motions are dropping exception errors so I decided to comment it out for now
+	//hyperbolic motions are dropping exception errors so I decided to comment it out here
 //    if x > 1 {
  //       //Hyperbolic motion
 //        //The hyperbolic sine is bijective
@@ -216,7 +212,7 @@ Parameter
 	}
     else {
 		set psi to _compute_psi(x, y, ll).
-		set T_ to ( ((psi + M * constant:pi / sqrt(abs(1 - x^2))) - x + ll * y) / (1 - x^2) ). //Might be unprecise due to divisionerrors with integers.
+		set T_ to ( ((psi + M * constant:pi / sqrt(abs(1 - x^2))) - x + ll * y) / (1 - x^2) ). 
 	}
     return T_ - T0.
 }
@@ -228,7 +224,6 @@ Parameter
 	y, 
 	T, 
 	ll.
-    // TODO: What about derivatives when x approaches 1?
     return (3 * T * x - 2 + 2 * ll^3 * x / y) / (1 - x^2).
 }
 
@@ -245,13 +240,13 @@ function _tof_equation_p3 {
 Parameter 
 	x, 
 	y, 
-	_, //Wildcard ? Here??! I'm really confused.
+	_,
 	dT, 
 	ddT, 
 	ll.
     return (7 * x * ddT + 8 * dT - 6 * (1 - ll^2) * ll^5 * x / y^5) / (1 - x^2).
 }
-//compute minimum T. Somewhat different from the original function because there is no need for x_T_min to be returned.
+//compute minimum T.
 function _compute_T_min {
 Parameter 
 	ll, 
@@ -265,7 +260,7 @@ Parameter
 	}
 	else {
 		if M = 0 {
-			set x_T_min to infinity.  //another reason to not return x_T_min. 
+			set x_T_min to infinity.
 			set T_min to 0.0.
 		}
         else {
@@ -297,7 +292,7 @@ Parameter
 		}
 		else {
 			//This is the real condition, which is not exactly equivalent
-			//elif T_1 < T < T_0
+			//else if T_1 < T < T_0
 			set x_0 to (T_0 / T)^(log2(T_1 / T_0)) - 1.
 
 			return x_0.
@@ -312,10 +307,6 @@ Parameter
 	}
 }
 //Find a minimum of time of flight equation using the Halley method.
-//Note
-//----
-//This function is private because it assumes a calling convention specific to
-//this module and is not really reusable.
 function _halley {
 Parameter 
 	p0, 
@@ -343,10 +334,6 @@ Parameter
     print"Failed to converge".
 }
 //Find a zero of time of flight equation using the Householder method.
-//Note
-// ----
-//This function is private because it assumes a calling convention specific to
-//this module and is not really reusable.
 Function _householder {
 Parameter 
 	p0, 

@@ -68,23 +68,23 @@ Parameter
 
     // Chord
     set ch to r2 - r1.
-    set c_norm to norm(ch).
-	set r1_norm to norm(r1).
-	set r2_norm to norm(r2).
+    set c_norm to norm(ch). //c_norm is actually the magnitude or the length of the chord, I just kept the names for consistency reasons.
+	set r1_norm to norm(r1). //same here
+	set r2_norm to norm(r2). // and here
 
     // Semiperimeter
     set s to (r1_norm + r2_norm + c_norm) * .5.
 
     // Versors
-    set i_r1 to r1 / r1_norm. 
-	set i_r2 to r2 / r2_norm.
+    set i_r1 to r1 / r1_norm. //this is actually the normalized vector
+	set i_r2 to r2 / r2_norm. //this one too
     set i_h to vcrs(i_r1, i_r2).
-	set i_h to i_h / norm(i_h). 
+	set i_h to i_h / norm(i_h). //this one also.
 
     // Geometry of the problem
     set ll to sqrt(1 - c_norm / s).
 
-    if i_h:z < 0 {
+    if i_h:z < 0 { 
        set ll to -ll.
        set i_h to -i_h.
 	}
@@ -245,7 +245,7 @@ function _tof_equation_p3 {
 Parameter 
 	x, 
 	y, 
-	_, //Wildcard ? Here??! I'm confused.
+	_, //Wildcard ? Here??! I'm really confused.
 	dT, 
 	ddT, 
 	ll.
@@ -265,7 +265,7 @@ Parameter
 	}
 	else {
 		if M = 0 {
-			set x_T_min to infinity.
+			set x_T_min to infinity.  //another reason to not return x_T_min. 
 			set T_min to 0.0.
 		}
         else {

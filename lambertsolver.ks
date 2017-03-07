@@ -1,15 +1,17 @@
 // Lambert solver for kOS
 //@Author Meltdown
 //based on Vallados solver
+// v. 0.1
 
 function Lambertsolver {
-Parameter k,  //body:mu
-				r,  //vector
-				r_0, //vector
-				tof, // in seconds
-				shortway, //boolean
-				num_iter, //35 is a good number
-				r_tollerance. // 1e-8 for now
+Parameter 
+	k,  //body:mu
+	r,  //vector
+	r_0, //vector
+	tof, // in seconds
+	shortway, //boolean
+	num_iter, //35 is a good number
+	r_tollerance. // 1e-8 for now
 	local tm is 0.
 	if shortway = true {
 		set tm to 1.

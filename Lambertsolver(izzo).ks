@@ -79,7 +79,7 @@ Parameter
     set i_r1 to r1 / r1_norm. 
 	set i_r2 to r2 / r2_norm.
     set i_h to vcrs(i_r1, i_r2).
- //   set i_h to i_h / norm(i_h). * should be fixed but the original code is using the crosspoduct.
+	set i_h to i_h / norm(i_h). 
 
     // Geometry of the problem
     set ll to sqrt(1 - c_norm / s).
@@ -374,4 +374,4 @@ Parameter
     print"Failed to converge".
 }
 
-Print _lambert(3.986004418e+14, v(2,-2,3), v(1,2,3), 360, 0, 35, 1e-4).
+Print _lambert(3.986004418e+14, v(2,-2,3), v(1,2,3), 1, 0, 35, 1e-4).

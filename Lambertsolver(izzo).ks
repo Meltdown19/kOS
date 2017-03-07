@@ -2,6 +2,7 @@
 //@author Meltdown
 // v. 0.1
 // The algorithm is still dropping alot of errors so don't try to send your manned mission to Jool with it.
+// M >= 1 is also not working.
 // original from https://github.com/poliastro/poliastro
 //The MIT License (MIT)
 //Copyright (c) 2012-2017 Juan Luis Cano Rodríguez
@@ -174,8 +175,7 @@ function _compute_y{
 Parameter 
 	x, 
 	ll.
-	
-    return sqrt(1 - ll^2 * (1 - x^2)).
+return sqrt(1 - ll^2 * (1 - x^2)).
 }
 //computes psi
 function _compute_psi {
@@ -306,7 +306,7 @@ Parameter
 	else {
         //Multiple revolution
 		set x_0l to (((M * constant:pi + constant:pi) / (8 * T))^(2 / 3) - 1) / (((M * constant:pi + constant:pi) / (8 * T))^(2 / 3) + 1).
-		set x_0r to (((8 * T) / (M * pi))^(2 / 3) - 1) / (((8 * T) / (M * pi))^(2 / 3) + 1).
+		set x_0r to (((8 * T) / (M * constant:pi))^(2 / 3) - 1) / (((8 * T) / (M * constant:pi))^(2 / 3) + 1).
 
 		return list(x_0l, x_0r).
 	}
@@ -374,4 +374,4 @@ Parameter
     print"Failed to converge".
 }
 
-Print _lambert(3.986004418e+14, v(2,-2,3), v(1,2,3), 3600, 0, 35, 1e-4).
+Print _lambert(3.986004418e+14, v(2,-2,3), v(1,2,3), 360, 0, 35, 1e-4).

@@ -1,6 +1,8 @@
 // Lambert solver for kOS
 //@Author Meltdown
-//based on Vallados solver
+//This uses the universal variable approach found in Battin, Mueller & White
+//with the bisection iteration suggested by Vallado. Multiple revolutions
+//not supported.
 // v. 0.1
 
 function Lambertsolver {

@@ -360,7 +360,7 @@ Parameter
 }
 set r0 to v(5000.0, 10000.0, 2100.0).
 set r1 to v(-14600.0, 2500.0, 7000.0).
-Print lambertsolver(398600, r0, r1, 3600, 0, 35, 1e-8).
+Print _lambert(398600, r0, r1, 3600, 0, 35, 1e-8).
 
 //    expected va = [-5.9925, 1.9254, 3.2456] 
 //    expected vb = [-3.3125, -4.1966, -0.38529] 

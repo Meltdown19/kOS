@@ -1,6 +1,7 @@
-//Izzo's algorithm for Lambert's problem for kOS
+//for kOS
+//Izzo's algorithm for Lambert's problem
 //author Meltdown
-// v. 0.1
+// v. 0.2
 // The algorithm is still dropping alot of errors so don't try to send your manned mission to Jool with it.
 // M >= 1 is also not working.
 // original from https://github.com/poliastro/poliastro
@@ -14,7 +15,11 @@
 //furnished to do so, subject to the following conditions:
 //The above copyright notice and this permission notice shall be included in all
 //copies or substantial portions of the Software.
-//TODO: Cleaning up the results (_lambert, reconstruct), investigating the tof, M-errors, nomenclature of norm() and i_versors, replacing const:pi with a set value.
+//TODO: tof, M-errors
+clearscreen.
+//Constant Pi
+set Pi to constant:pi.
+
 function asinh {
 Parameter n.
 
@@ -22,38 +27,39 @@ return log10(n + sqrt(n^2 +1)).
 }
 //]0, Inf] a true +inf would be nice but hey...hacks are real.
 set infinity to 1e69.
-
 //log to the base 2
 function log2 {
 Parameter n.
+
 return log10(n) / log10(2). 
 }
-// 
-function norm {
+// composes the magnitude of a vector
+function magnitude {
 Parameter vec.
-    return vec:mag.
+	return sqrt(vdot(vec,vec)).
 }
 //Hypergeometric function 2F1(3, 1, 5/2, x), see [Battin].
-function hyp2f1b {
+function Hyp2f1b {
 Parameter x.
-    if x >= 1.0 {
-        return infinity.
-	}
-    else {
-        set res to 1.
-        set term to 1.
-        set ii to 0.
-        Until res_old = res {
-            set term to term * (3 + ii) * (1 + ii) / (5 / 2 + ii) * x / (ii + 1).
-            set res_old to res.
-            set res to res + term.
-            if res_old = res {
-                return res.
-			}
-            set ii to ii + 1.
-			wait 0.0001.
+	function fast_hyp {
+		Parameter 
+		x,
+		res,
+		term,
+		n,
+		res_old.
+		local term to term * (3 + n) * (1 + n) / (5 / 2 + n) * x / (n + 1).
+		local res_old to res.
+		local res to res + term.
+		if res_old = res {
+			return res.
 		}
+		return fast_hyp(x, res, term, n+1, res_old).
 	}
+	if x >= 1 {
+		return infinity.
+	}
+	return fast_hyp(x,1,1,0,0).
 }
 //Mainfunction
 //returns a list .
@@ -69,21 +75,22 @@ Parameter
 
     // Chord
     set ch to r2 - r1.
-    set c_norm to norm(ch). //c_norm is the magnitude or the length of the chord, I just kept the names for consistency reasons.
-	set r1_norm to norm(r1). //same here
-	set r2_norm to norm(r2). // and here
+	// Magnitude Vectors
+    set c_mag to magnitude(ch). 
+	set r1_mag to magnitude(r1). 
+	set r2_mag to magnitude(r2).
 
     // Semiperimeter
-    set s to (r1_norm + r2_norm + c_norm) * .5.
+    set s to (r1_mag + r2_mag + c_mag) * .5.
 
     // Versors
-    set i_r1 to r1 / r1_norm. //this is actually the normalized vector
-	set i_r2 to r2 / r2_norm. //this one too
+    set i_r1 to r1 / r1_mag. 
+	set i_r2 to r2 / r2_mag. 
     set i_h to vcrs(i_r1, i_r2).
-	set i_h to i_h / norm(i_h). //this one also.
+	set i_h to i_h / magnitude(i_h).
 
     // Geometry of the problem
-    set ll to sqrt(1 - c_norm / s).
+    set ll to sqrt(1 - c_mag / s).
 
     if i_h:z < 0 { 
        set ll to -ll.
@@ -100,18 +107,14 @@ Parameter
 
     // Reconstruct
     set gamma to sqrt(k * s / 2).
-    set rho to (r1_norm - r2_norm) / c_norm.
+    set rho to (r1_mag - r2_mag) / c_mag.
     set sigma to sqrt(1 - rho^2).
-	set halfres to _reconstruct(xy[0], xy[1], r1_norm, r2_norm, ll, gamma, rho, sigma).
-	set V_r1 to halfres[0].
-	set V_r2 to halfres[1].
-	set V_t1 to halfres[2].
-	set V_t2 to halfres[3].
-	set reslambert to list().
-	reslambert:add(V_r1 * i_r1 + V_t1 * i_t1).
-	reslambert:add(V_r2 * i_r2 + V_t2 * i_t2).
-	return reslambert.
-
+	set re_res to _reconstruct(xy[0], xy[1], r1_mag, r2_mag, ll, gamma, rho, sigma).
+	set V_r1 to re_res[0].
+	set V_r2 to re_res[1].
+	set V_t1 to re_res[2].
+	set V_t2 to re_res[3].
+	return list( (V_r1 * i_r1 + V_t1 * i_t1),(V_r2 * i_r2 + V_t2 * i_t2) ) .
 }
 
 function _reconstruct {
@@ -129,12 +132,7 @@ Parameter
     set V_r2 to -gamma * ((ll * y - x) + rho * (ll * y + x)) / r2.
     set V_t1 to gamma * sigma * (y + ll * x) / r1.
     set V_t2 to gamma * sigma * (y + ll * x) / r2.
-    local res is list().
-	res:add(V_r1).
-	res:add(V_r2).
-	res:add(V_t1).
-	res:add(V_t2).
-	return res.
+	return list(V_r1, V_r2, V_t1, V_t2).
 }
 
 //Computes all x, y for given number of revolutions.
@@ -145,10 +143,10 @@ Parameter
 	M, 
 	numiter, 
 	rtol.
-   set M_max to floor(T / constant:pi).
+   set M_max to floor(T / Pi).
     set T_00 to arccos(ll) + ll * sqrt(1 - ll^2).
     //Refine maximum number of revolutions if necessary
-    if T < T_00 + M_max * constant:pi and M_max > 0 {
+    if T < T_00 + M_max * Pi and M_max > 0 {
         set T_min to _compute_T_min(ll, M_max, numiter, rtol).
         if T < T_min {
             set M_max to M_max - 1.
@@ -186,10 +184,10 @@ ll.
         return arccos(x * y + ll * (1 - x^2)).
 	}
 	//hyperbolic motions are dropping exception errors so I decided to comment it out here
-//    if x > 1 {
- //       //Hyperbolic motion
-//        //The hyperbolic sine is bijective
-//        return asinh((y - x * ll) * sqrt(x^2 - 1)).
+//   if x > 1 {
+       //Hyperbolic motion
+       //The hyperbolic sine is bijective
+//	return asinh((y - x * ll) * sqrt(x^2 - 1)).
 //	}
     else {
         // Parabolic motion
@@ -205,14 +203,14 @@ Parameter
 	ll, 
 	M.
 	if M = 0 and sqrt(0.6) < x  and x < sqrt(1.4) {
-		set eta to y - ll * x.
-		set S_1 to (1 - ll - x * eta) * .5.
+		set _eta to y - ll * x.
+		set S_1 to (1 - ll - x * _eta) * .5.
 		set Q to 4 / 3 * hyp2f1b(S_1). 
-		set T_ to (eta^3 * Q + 4 * ll * eta) * .5.
+		set T_ to (_eta^3 * Q + 4 * ll * _eta) * .5.
 	}
     else {
 		set psi to _compute_psi(x, y, ll).
-		set T_ to ( ((psi + M * constant:pi / sqrt(abs(1 - x^2))) - x + ll * y) / (1 - x^2) ). 
+		set T_ to ( ((psi + M * Pi / sqrt(abs(1 - x^2))) - x + ll * y) / (1 - x^2) ). //TODO: check this again
 	}
     return T_ - T0.
 }
@@ -282,7 +280,7 @@ Parameter
 	M.
 	if M = 0 {
        // Single revolution
-		set T_0 to arccos(ll) + ll * sqrt(1 - ll^2) + M * constant:pi. // Equation 19
+		set T_0 to arccos(ll) + ll * sqrt(1 - ll^2) + M * Pi. // Equation 19
 		set T_1 to 2 * (1 - ll^3) / 3.  // Equation 21
 		if T >= T_0 {
 			set x_0 to (T_0 / T)^(2 / 3) - 1.
@@ -300,8 +298,8 @@ Parameter
 	}
 	else {
         //Multiple revolution
-		set x_0l to (((M * constant:pi + constant:pi) / (8 * T))^(2 / 3) - 1) / (((M * constant:pi + constant:pi) / (8 * T))^(2 / 3) + 1).
-		set x_0r to (((8 * T) / (M * constant:pi))^(2 / 3) - 1) / (((8 * T) / (M * constant:pi))^(2 / 3) + 1).
+		set x_0l to (((M * Pi + Pi) / (8 * T))^(2 / 3) - 1) / (((M * Pi + Pi) / (8 * T))^(2 / 3) + 1).
+		set x_0r to (((8 * T) / (M * Pi))^(2 / 3) - 1) / (((8 * T) / (M * Pi))^(2 / 3) + 1).
 
 		return list(x_0l, x_0r).
 	}
@@ -360,5 +358,9 @@ Parameter
 	}
     print"Failed to converge".
 }
+set r0 to v(5000.0, 10000.0, 2100.0).
+set r1 to v(-14600.0, 2500.0, 7000.0).
+Print lambertsolver(398600, r0, r1, 3600, 0, 35, 1e-8).
 
-Print _lambert(3.986004418e+14, v(2,-2,3), v(1,2,3), 1, 0, 35, 1e-4).
+//    expected va = [-5.9925, 1.9254, 3.2456] 
+//    expected vb = [-3.3125, -4.1966, -0.38529] 

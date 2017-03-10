@@ -23,16 +23,10 @@ set Pi to constant:pi.
 function asinh {
 Parameter n.
 
-return log10(n + sqrt(n^2 +1)).
+return ln(n + sqrt(n^2 +1)).
 }
 //]0, Inf] a true +inf would be nice but hey...hacks are real.
 set infinity to 1e69.
-//log to the base 2
-function log2 {
-Parameter n.
-
-return log10(n) / log10(2). 
-}
 // composes the magnitude of a vector
 function magnitude {
 Parameter vec.
@@ -291,7 +285,7 @@ Parameter
 		else {
 			//This is the real condition, which is not exactly equivalent
 			//else if T_1 < T < T_0
-			set x_0 to (T_0 / T)^(log2(T_1 / T_0)) - 1.
+			set x_0 to (T_0 / T)^(ln(T_1 / T_0)) - 1.
 
 			return x_0.
 		}

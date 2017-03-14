@@ -1,4 +1,5 @@
 // Simples kOS Ascent script
+// Don't try to run it with launchers TWR lower than 1.7! In Stock KSP 1.2 you should always go full throttle on a TWR at slightly above 2
 {
 set pit_PID to PID_Init(0.03, 0.0, 0.0003, -75, 75).
 set pit_noneg_PID to PID_Init(0.81, 0.0, 0.03, -15, 15).
@@ -23,7 +24,7 @@ global Flightprogram is lex(
 	).
 Function Presys_checks{
 	Parameter mission.
-	monitor().
+	monitor(). //a ssimple loop that plots some important values on the kOS Monitor.
 	Notify ("Flightcomputer is running",2).
 	wait 2.
 	mission["next"]().
@@ -52,7 +53,7 @@ Function  Countdown {
 }
 Function Stage_me {
 	Parameter mission.
-	staging_logic().
+	staging_logic(). //A loop thats checking the ships thrust for when to stage. Its not fully coded so I left it on my local for now.
 	mission["next"]().
 }
 Function Pitchcontrol {
@@ -61,7 +62,7 @@ Function Pitchcontrol {
 			set curS to Heading(90,90).
 		}
 		set curS to heading(90, MAX(90 * (CONSTANT:E ^ (-1.789e-5 * apoapsis )),12)).  
-		If apoapsis > (TrgH + (tollerance * .5)) {
+		If apoapsis > (TrgH + (tollerance * .5)) { //TrgH is the desired Altitude, tollerance is set to a 10th of that for low circular orbits
 			mission["next"]().
 		}
 }

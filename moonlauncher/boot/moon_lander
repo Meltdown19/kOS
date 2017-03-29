@@ -1,0 +1,28 @@
+set ship:control:pilotmainthrottle to 0.
+clearscreen.
+set target to body("moon").
+set config:ipu to 400.
+for module in Ship:Modulesnamed("kOSProcessor") { 
+	module:doevent("open terminal").
+}
+function xcopy {
+Parameter file.
+	switch to 1.
+	if not exists(file) {
+		switch to 0.
+		copypath(file ,"1:/").
+		switch to 1.
+		runpath (file).
+	}
+	runpath(file).
+}
+xcopy ("lib_moon.ks").
+xcopy ("lib_pid.ks").
+xcopy ("mc.ks").
+xcopy("staging_logic.ks").
+xcopy("Flightprogram_moon.ks").
+run_mission(flightprogram["sequence"], flightprogram["events"]).
+xcopy("transfer.ks").
+run_mission(transfer["sequence"],transfer["events"]).
+xcopy("descent.ks").
+run_mission(descent["sequence"], descent["events"]).

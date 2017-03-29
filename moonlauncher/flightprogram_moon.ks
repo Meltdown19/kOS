@@ -1,3 +1,4 @@
+//for a 2-stage to orbit vessel. Working for most of my rockets with some adjustments.
 {
 set TrgH to 15e4. //orbit altitude at starting body.
 set tollerance to TrgH*.04.

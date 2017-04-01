@@ -63,7 +63,7 @@ Function Presys_checks{
 	Parameter mission.
 	if kuniverse:timewarp:warp = 0 and kuniverse:timewarp:issettled {
 	set curT to 1.
-	staging(). //staging
+	stagingfunc(). //staging
 	dFair(). //Fairing decoupler
 	pan_on(). //panel extender
 	Notify ("Flightcomputer is running",2).

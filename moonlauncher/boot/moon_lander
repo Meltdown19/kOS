@@ -19,7 +19,7 @@ Parameter file.
 xcopy ("lib_moon.ks").
 xcopy ("lib_pid.ks").
 xcopy ("mc.ks").
-xcopy("staging_logic.ks").
+xcopy("staging.ks").
 xcopy("Flightprogram_moon.ks").
 run_mission(flightprogram["sequence"], flightprogram["events"]).
 xcopy("transfer.ks").

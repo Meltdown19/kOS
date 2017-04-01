@@ -38,12 +38,12 @@ Parameter mission.
 	set Dol to relativeInc(ship,target).
 	wait 0.
 	set Dac to relativeInc(ship,target).
-	if Dol > Dac and relativeInc(ship,target) < 10 and relativeInc(ship,target) > 2 {
+	if Dol > Dac and relativeInc(ship,target) < 10 and relativeInc(ship,target) > 1.5 {
 		if kuniverse:timewarp:warp <> 3 {
 			set  kuniverse:timewarp:warp to 3.
 		}
 	}
-		if Dol > Dac and relativeInc(ship,target) < 2 {
+		if Dol > Dac and relativeInc(ship,target) <= 1.5 {
 		if kuniverse:timewarp:warp <> 1 {
 			set  kuniverse:timewarp:warp to 1.
 		}
@@ -53,7 +53,7 @@ Parameter mission.
 			set  kuniverse:timewarp:warp to 6.
 		}
 	}
-	If relativeInc(ship,target) < 1.4 and Dol > Dac {
+	If relativeInc(ship,target) < 1 and Dol > Dac {
 	set kuniverse:timewarp:warp to 0.
 	set ship:control:pilotmainthrottle to 0.
 	mission["next"]().
@@ -63,11 +63,12 @@ Function Presys_checks{
 	Parameter mission.
 	if kuniverse:timewarp:warp = 0 and kuniverse:timewarp:issettled {
 	set curT to 1.
-	staging_logic(). //staging
+	staging(). //staging
 	dFair(). //Fairing decoupler
 	pan_on(). //panel extender
 	Notify ("Flightcomputer is running",2).
 	wait 2.
+	stage.
 	mission["next"]().
 	}
 }

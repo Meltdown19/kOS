@@ -1,5 +1,5 @@
 set sep_acc to 0.
-function staging_logic {
+function stagingfunc {
 	When Altitude < Body:Atm:Height then {
 		for sep in ship:partsnamed("SepMotor1") {
 			local ign is sep:getmodule("ModuleEnginesRF"):Getfield("ignitions remaining").

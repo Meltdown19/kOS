@@ -35,31 +35,30 @@ mission["next"]().
 }
 Function rel_Incl { 
 Parameter mission.
-	set Dol to relativeInc(ship,moon).
+	set Dol to relativeInc(ship,target).
 	wait 0.
-	set Dac to relativeInc(ship,moon).
-	if Dol > Dac and relativeInc(ship,moon) < 10 and relativeInc(ship,moon) > 2 {
+	set Dac to relativeInc(ship,target).
+	if Dol > Dac and relativeInc(ship,target) < 10 and relativeInc(ship,target) > 2 {
 		if kuniverse:timewarp:warp <> 3 {
 			set  kuniverse:timewarp:warp to 3.
 		}
 	}
-		if Dol > Dac and relativeInc(ship,moon) < 2 {
+		if Dol > Dac and relativeInc(ship,target) < 2 {
 		if kuniverse:timewarp:warp <> 1 {
 			set  kuniverse:timewarp:warp to 1.
 		}
 	}
-	if Dol < Dac or (Dol > Dac and relativeInc(ship,moon) > 10) {
+	if Dol < Dac or (Dol > Dac and relativeInc(ship,target) > 10) {
 		if kuniverse:timewarp:warp <> 6 {
 			set  kuniverse:timewarp:warp to 6.
 		}
 	}
-	If relativeInc(ship,moon) < 1.4 and Dol > Dac {
+	If relativeInc(ship,target) < 1.4 and Dol > Dac {
 	set kuniverse:timewarp:warp to 0.
 	set ship:control:pilotmainthrottle to 0.
 	mission["next"]().
 	}
 }
-
 Function Presys_checks{
 	Parameter mission.
 	if kuniverse:timewarp:warp = 0 and kuniverse:timewarp:issettled {

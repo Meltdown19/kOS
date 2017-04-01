@@ -13,7 +13,7 @@ set curT to 0.
 Lock throttle to curT.
 set curS TO Heading(90,90).
 LOCK Steering to curS.
-set n to 2. //iterations for Coutndown
+set n to 3. //iterations for Coutndown
 global Flightprogram is lex(
 	"sequence", list (
 	"Init wait",phys_wait@,
@@ -74,23 +74,16 @@ Function Presys_checks{
 }
 Function  Countdown {
 	Parameter mission.
-	If n >= 2 {
-		stage.
-		NOTIFY("T - " + n + " Seconds", 1).
+	FROM {local x is n.} UNTIL x = 0 STEP {set x to x-1.} DO {
+		NOTIFY("T - "+ x +" Seconds", 1).
 		wait 1.
-		set n to n-1.
 	}
-	If n = 1 {
-		NOTIFY("T - " + n + " Second", 1).
-		wait 1.
-		set n to n-1.
-	}
-	if n = 0 {
-		NOTIFY("LIFTOFF", 1).
-		stage.
-		wait 1.
-		mission["next"]().
-	}
+	NOTIFY("Liftoff", 1).
+	wait 1.
+	stage.
+	staging_logic(). //staging
+	dFair(). //nur die erste Fairing abkoppeln
+	mission["next"]().
 }
 Function Pitchcontrol { 
 	Parameter mission.

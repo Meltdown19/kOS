@@ -184,17 +184,11 @@ function dFair {
 		for module in Ship:Modulesnamed("ProceduralFairingDecoupler") { // Procedural Fairings
 			module:doevent("jettison").
 		}
-		if ship:altitude > 0.55 * body:atm:height {
-			preserve.
-		}	
 	}
 }
 function pan_on {
 	when ship:altitude > 0.9 * Body:Atm:Height then{
 		Panels ON.
-	if ship:altitude > 0.9 * body:atm:height {
-		preserve.
-	}
 	}
 }
 function bottom_dist_from_CoM {

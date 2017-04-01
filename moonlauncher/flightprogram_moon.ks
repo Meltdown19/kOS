@@ -5,15 +5,15 @@ set tollerance to TrgH*.04.
 Lock Myspeed to Verticalspeed.
 set phaseiii_pitch to 45.
 set pit_PID to PID_Init(0.03, 0.001, 0.0003, -phaseiii_pitch, phaseiii_pitch).
-set pit_noneg_PID to PID_Init(0.81, 0.0, 0.03, -15, 15).
 set phasei_pitch to 15.
+set pit_noneg_PID to PID_Init(0.81, 0.0, 0.03, -phasei_pitch, phasei_pitch).
 set pit_PID_p1 to PID_Init(0.0018, 0.001, 0.005, -phasei_pitch, 3).
 Clearscreen.
 set curT to 0.
 Lock throttle to curT.
 set curS TO Heading(90,90).
 LOCK Steering to curS.
-set n to 3. //iterations for Coutndown
+set n-Count to 3. //iterations for Countdown
 global Flightprogram is lex(
 	"sequence", list (
 	"Init wait",phys_wait@,
@@ -27,10 +27,10 @@ global Flightprogram is lex(
 	), 
 	"events", Lex()
 	).
-Function phys_wait {
+Function phys_wait { 
 Parameter mission.
 print "Physics settling in."at(0,1).
-wait 5.
+wait 5. //to make sure that the craft stands still and rel_incl isn't returning false results
 mission["next"]().
 }
 Function rel_Incl { 
@@ -74,15 +74,13 @@ Function Presys_checks{
 }
 Function  Countdown {
 	Parameter mission.
-	FROM {local x is n.} UNTIL x = 0 STEP {set x to x-1.} DO {
+	FROM {local x is n-Count.} UNTIL x = 0 STEP {set x to x-1.} DO {
 		NOTIFY("T - "+ x +" Seconds", 1).
 		wait 1.
 	}
 	NOTIFY("Liftoff", 1).
 	wait 1.
 	stage.
-	staging_logic(). //staging
-	dFair(). //nur die erste Fairing abkoppeln
 	mission["next"]().
 }
 Function Pitchcontrol { 
@@ -90,7 +88,7 @@ Function Pitchcontrol {
 		If myspeed < 100 {
 			set curS to Heading(90,90).
 		}
-		set curS to heading(90, MAX(90 * (constant:e ^ (-1.789e-5 * apoapsis )),12)).  
+		set curS to heading(90, MAX(90 * (constant:e ^ (-1.789e-5 * apoapsis )),12)).  //change the max pitch if your craft is still in a steep climb once Pe is above -100k
 		If apoapsis > (TrgH + (tollerance * .5)) {
 			mission["next"]().
 		}
@@ -129,7 +127,7 @@ Function Finalizing {
 	If Periapsis > TrgH or (Periapsis > body:atm:height and apoapsis > TrgH + constant:pi*tollerance) {	
 		set curt to 0.
 		wait 0.1.
-		stage.
+		stage. //delete this is you want to keep your current stage
 		wait 0.1.
 		mission["terminate"]().
 	}

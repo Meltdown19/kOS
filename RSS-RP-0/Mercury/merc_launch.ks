@@ -94,16 +94,16 @@ Function  Countdown {
 Function Pitchcontrol { 
 	Parameter mission.
 		If myspeed < 100 {
-			set curS to Heading(1,90).
+			set curS to Heading(90,90).
 		}
-		set curS to heading(1, MAX(90 * (constant:e ^ (-1.789e-5 * apoapsis )),13)).  
+		set curS to heading(90, MAX(90 * (constant:e ^ (-1.789e-5 * apoapsis )),13)).  
 		If apoapsis > (TrgH + (tollerance * .5)) {
 			mission["next"]().
 		}
 }
 Function Phasei {
 	Parameter mission.
-	set curS to heading(1,PID_Seek(Pit_PID_p1, (TrgH + tollerance), Apoapsis)).
+	set curS to heading(compass_of_vel(ship:velocity:orbit),PID_Seek(Pit_PID_p1, (TrgH + tollerance), Apoapsis)).
 	If Periapsis < -1e6 and Periapsis > -4e6{
 		mission["next"]().
 	}
@@ -111,10 +111,10 @@ Function Phasei {
 Function Phaseii {
 	Parameter mission.
 	if eta:Apoapsis < eta:Periapsis {
-		set curS to heading(1,PID_Seek(Pit_PID_p1, (TrgH + tollerance), Apoapsis)).
+		set curS to heading(compass_of_vel(ship:velocity:orbit),PID_Seek(Pit_PID_p1, (TrgH + tollerance), Apoapsis)).
 	}
 	if myspeed < 20 {
-			set curS to heading(1,PID_Seek(Pit_noneg_PID, 5, myspeed)).
+			set curS to heading(compass_of_vel(ship:velocity:orbit),PID_Seek(Pit_noneg_PID, 5, myspeed)).
 	}
 	If Periapsis > -7e5 {
 		mission["next"]().

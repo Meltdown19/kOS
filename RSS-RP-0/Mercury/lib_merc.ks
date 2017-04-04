@@ -7,7 +7,6 @@ HUDTEXT (msg, t, 2, 50, WHITE, FALSE).
 function Pitchangle {
 return Vang(Ship:up:vector,Ship:facing:vector).
 }
-
 function east_for {
 Parameter ves.
 return vcrs(ves:up:vector, ves:north:vector).

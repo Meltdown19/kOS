@@ -16,7 +16,6 @@ xcopy ("lib_merc.ks").
 xcopy ("lib_pid.ks").
 xcopy ("mc.ks").
 xcopy("merc_stage.ks").
-xcopy("dv_calc.ks").
 xcopy("merc_launch.ks").
 run_mission(mercury["sequence"], mercury["events"]).
 set ship:control:pilotmainthrottle to 0.

@@ -1,4 +1,3 @@
-set ship:control:pilotmainthrottle to 0.
 Function NOTIFY {
 Parameter Msg.
 Parameter t.

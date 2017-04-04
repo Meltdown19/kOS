@@ -19,7 +19,6 @@ set n to 3.
 global mercury is lex(
 	"sequence", list (
 	"Init wait",phys_wait@,
-//	"Inclination wait",rel_Incl@,
 	"Presys_checks", presys_checks@,
 	"Countdown", Countdown@,
 	"Pitchcontrol", Pitchcontrol@,
@@ -35,48 +34,13 @@ print "Physics settling in."at(0,1).
 wait 5.
 mission["next"]().
 }
-Function rel_Incl { 
-Parameter mission.
-	set Dol to relativeInc(ship,target).
-	wait 0.
-	set Dac to relativeInc(ship,target).
-	if Dol > Dac and relativeInc(ship,target) < 15 and relativeInc(ship,target) > 3.5 {
-		if kuniverse:timewarp:warp <> 3 {
-			set  kuniverse:timewarp:warp to 3.
-		}
-	}
-	if Dol > Dac and relativeInc(ship,target) < 3.5 and relativeInc(ship,target) > 2 {
-		if kuniverse:timewarp:warp <> 2 {
-			set  kuniverse:timewarp:warp to 2.
-		}
-	}
-		if Dol > Dac and relativeInc(ship,target) < 2 {
-		if kuniverse:timewarp:warp <> 1 {
-			set  kuniverse:timewarp:warp to 1.
-		}
-	}
-	if Dol < Dac or (Dol > Dac and relativeInc(ship,target) > 10) {
-		if kuniverse:timewarp:warp <> 4 {
-			set  kuniverse:timewarp:warp to 4.
-		}
-	}
-	If relativeInc(ship,target) < 1.2 and Dol > Dac {
-	set kuniverse:timewarp:warp to 0.
-	set ship:control:pilotmainthrottle to 0.
-	mission["next"]().
-	}
-}
-
 Function Presys_checks{
 	Parameter mission.
-	if kuniverse:timewarp:warp = 0 and kuniverse:timewarp:issettled {
-	set ship:control:pilotmainthrottle to 0.
 	set curT to 1.
 	Notify ("Flightcomputer is running",2).
 	wait 2.
 	stage.
 	mission["next"]().
-	}
 }
 Function  Countdown {
 	Parameter mission.
@@ -87,8 +51,9 @@ Function  Countdown {
 	NOTIFY("Liftoff", 1).
 	wait 1.
 	stage.
-	staging_logic().
+	stagingfunc().
 	dvcalc().
+	dfair().
 	mission["next"]().
 }
 Function Pitchcontrol { 

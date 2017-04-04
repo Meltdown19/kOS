@@ -66,7 +66,6 @@ function do_staging {
 }
 function get_active_eng {
 	list engines in all_eng.
-	local foo is all_eng:length -1.
 	local result is list().
 	from {local x is (all_eng:length -1).} until x = 0 step {set x to x-1.} do {
 		if listeng[x]:stage = stage:number {

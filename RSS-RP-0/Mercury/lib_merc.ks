@@ -65,13 +65,16 @@ function do_staging {
 }
 function get_active_eng {
 	list engines in all_eng.
-	local result is list().
-	from {local x is (all_eng:length -1).} until x = 0 step {set x to x-1.} do {
-		if listeng[x]:stage = stage:number {
-			result:add(all_eng[x]).
+	local length is all_eng:length-1.
+	if length = 0 { return all_eng.}
+	else {
+		from {local x is length.} until x = 0 step {set x to x-1.} do {
+			if all_eng[x]:stage = stage:number {
+				result:add(all_eng[x]).
+			}
 		}
+		return result.
 	}
-	return result.
 }
 function stagingfunc {
 	When Periapsis < Body:Atm:Height then {

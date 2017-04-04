@@ -1,6 +1,4 @@
-set ship:control:pilotmainthrottle to 0.
 {
-set ship:control:pilotmainthrottle to 0.
 set TrgH to 15e4.
 set tollerance to TrgH*.04.
 Lock Myspeed to Verticalspeed.

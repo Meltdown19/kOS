@@ -4,11 +4,9 @@ set ship:control:pilotmainthrottle to 0.
 set TrgH to 15e4.
 set tollerance to TrgH*.04.
 Lock Myspeed to Verticalspeed.
-set phaseiii_pitch to 45.
-set pit_PID to PID_Init(0.03, 0.001, 0.0003, -phaseiii_pitch, phaseiii_pitch).
+set pit_PID to PID_Init(0.03, 0.001, 0.0003, -45, 45).
 set pit_noneg_PID to PID_Init(0.81, 0.0, 0.03, -15, 15).
-set phasei_pitch to 15.
-set pit_PID_p1 to PID_Init(0.0018, 0.001, 0.005, -phasei_pitch, 3).
+set pit_PID_p1 to PID_Init(0.0018, 0.001, 0.005, -15, 3).
 set aim_down_pid to PID_init(1,0.25,0.1,-45,45).
 Clearscreen.
 set curT to 0.

@@ -96,8 +96,8 @@ Function Finalizing {
 	else { 
 		set aim_down_angle to 0.
 	}
-	set side_vec to VCRS(ship:up:vector, ship:velocity:surface).
-	set aim_vec to angleaxis(-aim_down_angle,side_vec) * ship:velocity:surface.
+	set side_vec to VCRS(ship:up:vector, ship:velocity:orbit).
+	set aim_vec to angleaxis(-aim_down_angle,side_vec) * ship:velocity:orbit.
 	set curs to aim_vec. 
 	If Periapsis > TrgH or (Periapsis > body:atm:height and apoapsis > TrgH + constant:pi*tollerance) {	
 		set curt to 0.

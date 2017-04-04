@@ -59,32 +59,36 @@ function dFair {
 		}
 	}
 }
+function do_staging {
+	Lock steering to heading(compass_of_vel(ship:velocity:orbit),Pitchangle).
+	wait 1.			
+	stage.
+	Lock steering to curs.
+}
+function get_active_eng {
+	list engines in all_eng.
+	local foo is all_eng:length -1.
+	local result is list().
+	from {local x is (all_eng:length -1).} until x = 0 step {set x to x-1.} do {
+		if listeng[x]:stage = stage:number {
+			result:add(all_eng[x]).
+		}
+	}
+	return result.
+}
 function stagingfunc {
 	When Periapsis < Body:Atm:Height then {
-		list engines in listeng.
-		local foo is listeng:length -1.
-		local curr_active_engines is list().
-		from {local x is (listeng:length -1).} until x = 0 step {set x to x-1.} do {
-			if listeng[x]:stage = stage:number {
-				curr_active_engines:add(listeng[x]).
-			}
-		}
+		set curr_active_engines to get_active_eng().
 		for eng in curr_active_engines {		
 			if eng:flameout {
 				notify ("Engine Flameout, activating next stage.",2).
-				Lock steering to heading(90,Pitchangle).
-				wait 1.			
-				stage.
-				Lock steering to curs.
+				do_staging().
 				break.
 			}
 			local ign is eng:getmodule("ModuleEnginesRF"):Getfield("ignitions remaining").
 			if not eng:ignition and not eng:flameout and ign = 0 {
 				notify ("Engine malfunction, activating next stage.",2).
-				Lock steering to heading(90,Pitchangle).
-				wait 1.			
-				stage.
-				Lock steering to curs.
+				do_staging().
 				break.
 			}
 		}
@@ -93,4 +97,5 @@ function stagingfunc {
 		}
 		wait 0.01.
 	}
+}
 }

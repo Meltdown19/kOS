@@ -63,23 +63,24 @@ function do_staging {
 	stage.
 	Lock steering to curs.
 }
-function get_active_eng {
+function act_eng {
+Parameter s is stage:number.
+	local res is list().
 	list engines in all_eng.
 	local length is all_eng:length-1.
 	if length = 0 { return all_eng.}
 	else {
 		from {local x is length.} until x = 0 step {set x to x-1.} do {
-			if all_eng[x]:stage = stage:number {
-				result:add(all_eng[x]).
+			if all_eng[x]:stage = s{
+				res:add(all_eng[x]).
 			}
 		}
-		return result.
+		return res.
 	}
 }
 function stagingfunc {
 	When Periapsis < Body:Atm:Height then {
-		set curr_active_engines to get_active_eng().
-		for eng in curr_active_engines {		
+		for eng in act_eng() {		
 			if eng:flameout {
 				notify ("Engine Flameout, activating next stage.",2).
 				do_staging().

@@ -1,10 +1,3 @@
-function Druck {
-parameter h is altitude.
-	if h < body:atm:height {
-	return (101.325 * constant:e^ (-h/body:atm:height)).
-	}
-	else return 0.
-}
 function act_eng {
 Parameter s is stage:number.
 	local res is list().
@@ -31,9 +24,10 @@ function deltavstage{
 	local mflow is 0.
 	for eng in act_eng() {
 		if eng:ignition {
+			local isp is eng:getmodule("ModuleEnginesRF"):Getfield("specific Impulse").
 			local F is eng:maxthrust.
 			set Ftot to Ftot + F.
-			set mflow to mflow + F / eng:ispat(Druck()).
+			if isp <> set mflow to mflow + F / isp.
 		}
 	}
 	if mflow = 0 { 
